@@ -13,8 +13,6 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-//#ifdef BUFF = 42
-
 void	clean_buff(char *buffer)
 {
 	int	this;
@@ -59,19 +57,10 @@ char	*get_next_line(int fd)
 		else
 			clean_buff(shira);	
 	}
-	//printf("\nshira: %s\nresult: %s\nmelon: %d\n", shira, result, melon);	
 	return (result);
 }
-//fazer strchr pra limpar buffer depois da nova linha
 
-// hello there
-// yeap
-
-// 7
-// hello there\nye
-// here\nye\0
-// ye\0dfghjkl
-#include <fcntl.h>
+/*#include <fcntl.h>
 
 int main (void)
 {
@@ -89,4 +78,4 @@ int main (void)
 	}
 	printf ("%s", get_next_line(fd));
 	close(fd);
-}
+}*/
