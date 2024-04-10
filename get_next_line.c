@@ -5,77 +5,83 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mmata-al <mmata-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/16 11:24:09 by mmata-al          #+#    #+#             */
-/*   Updated: 2023/12/06 20:26:45 by mmata-al         ###   ########.fr       */
+/*   Created: 2024/03/23 10:57:39 by mmata-al          #+#    #+#             */
+/*   Updated: 2024/04/10 13:37:18 by mmata-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
-
-void	clean_buff(char *buffer)
-{
-	int	this;
-
-	this = 0;
-	while (this < BUFFER_SIZE)
-	{
-		buffer[this] = 0;
-		this++;
-	}
-}
-
-void	buffer_neat(char *nlp, char *buf)
-{
-	if (nlp[1] == '\0')
-		clean_buff(buf);
-	else
-		ft_strcpy(buf, nlp + 1);
-}
 
 char	*get_next_line(int fd)
-{	
+{
 	static char	shira[BUFFER_SIZE + 1];
-	char		*result;
-	char		*melon; //null pointer
-	
-	if (fd < 0 || fd >= FOPEN_MAX || BUFFER_SIZE < 1)
+	char		*melon;
+	int			soda;
+
+	soda = 0;
+	if (fd < 0)
+		return (NULL);
+	if (read(fd, 0, 0) < 0 || BUFFER_SIZE < 1)
 	{
-		clean_buff(shira);
-		return(NULL);
+		while (shira[soda])
+			shira[soda++] = '\0';
+		return (NULL);
 	}
-	result = NULL;
-	while (shira[0] || read(fd, shira, BUFFER_SIZE))
+	melon = NULL;
+	while (shira[0] || read(fd, shira, BUFFER_SIZE) > 0)
 	{
-		melon = ft_strchr(shira, '\n');
-		result = ftstrjoiner(result, shira);
-		if (melon)
-		{
-			buffer_neat(melon, shira);
+		melon = ftstrjoin(melon, shira);
+		if (clean_buff(shira))
 			break ;
-		}
-		else
-			clean_buff(shira);	
 	}
-	return (result);
+	return (melon);
 }
 
-/*#include <fcntl.h>
+#include <fcntl.h>
 
-int main (void)
+int	main(void)
 {
-	int i;
+int		fd;
+char	*line;
+int i = 1;
+printf("FILE 1:\n");
+fd = open("a.txt", O_RDONLY);
+while (1)
+{
+	line = get_next_line(-1);
+	printf("Line %d", i++);
+	printf("-> %s", line);
+	free(line);
+	if (!line)
+		break ;
+}
+close(fd);
+i = 1;
+printf("\nFILE 2:\n");
+fd = open("b.txt", O_RDONLY);
+while (1)
+{
+	line = get_next_line(fd);
+	printf("Line %d", i++);
+	printf("-> %s", line);
+	free(line);
+	if (!line)
+		break ;
+}
+close(fd);
+i = 1;
+printf("\nCLOSED FILE:\n");
+fd = open("a.txt", O_RDONLY);
+close(fd);
+while (1)
+{
+	line = get_next_line(fd);
+	printf("Line %d", i++);
+	printf("-> %s", line);
+	free(line);
+	if (!line)
+		break ;
+}
 
-	i = 0;
-	int fd = open("file.txt", O_RDONLY);
-	while (i < 5)
-	{
-		char *s = get_next_line(fd);
-		printf("\n\n%s", s);
-		if (!s)
-			break ;
-		i++;
-	}
-	printf ("%s", get_next_line(fd));
-	close(fd);
-}*/
+return (0);
+}
